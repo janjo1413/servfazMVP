@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CalculateInput",
+  "type": "object",
+  "properties": {
+    "município": {
+      "type": "string"
+    },
+    "ajuizamento": {
+      "type": "string"
+    },
+    "citação": {
+      "type": "string"
+    },
+    "início_cálculo": {
+      "type": "string"
+    },
+    "final_cálculo": {
+      "type": "string"
+    },
+    "honorários_s_valor_da_condenação": {
+      "type": "string"
+    },
+    "honorários_em_valor_fixo": {
+      "type": "number"
+    },
+    "deságio_a_aplicar_sobre_o_principal": {
+      "type": "number"
+    },
+    "deságio_em_a_aplicar_em_honorários": {
+      "type": "number"
+    },
+    "correção_até": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "município",
+    "ajuizamento",
+    "citação",
+    "início_cálculo",
+    "final_cálculo",
+    "honorários_s_valor_da_condenação",
+    "honorários_em_valor_fixo",
+    "deságio_a_aplicar_sobre_o_principal",
+    "deságio_em_a_aplicar_em_honorários",
+    "correção_até"
+  ]
+}

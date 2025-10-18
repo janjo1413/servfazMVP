@@ -1,0 +1,28 @@
+{
+  "aba": "RESUMO",
+  "entradas": {
+    "municipio": "B6",
+    "ajuizamento": "B7",
+    "citacao": "B8",
+    "inicio_calculo": "B9",
+    "final_calculo": "B10",
+    "honorarios_percentual": "B11",
+    "honorarios_valor_fixo": "B12",
+    "desagio_principal": "B13",
+    "desagio_honorarios": "B14",
+    "correcao_ate": "B15"
+  },
+  "tabelas": {
+    "inicio": 21,
+    "fim": 104,
+    "colunas": ["A", "B", "C", "D", "E", "F", "AB"],
+    "estrutura": {
+      "titulo": "linha N (A)",
+      "cabecalho": "linha N+1 (A–F)",
+      "valores": "linha N+2 (A–F)",
+      "total": "linha N+3 (A–C)",
+      "espacamento": "linha N+4 vazia"
+    },
+    "bloco_especial": "TOTAL DO VALOR PROPOSTO PARA ACORDO usa colunas A–C"
+  }
+}

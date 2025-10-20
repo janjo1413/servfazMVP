@@ -56,7 +56,8 @@ class Storage:
             ID único do registro
         """
         result_id = str(uuid.uuid4())
-        created_at = datetime.utcnow().isoformat()
+        # Usar horário local do sistema ao invés de UTC
+        created_at = datetime.now().isoformat()
         
         conn = sqlite3.connect(str(self.db_path))
         cursor = conn.cursor()
@@ -112,17 +113,48 @@ class Storage:
             limit: Número máximo de resultados a retornar
         
         Returns:
-            Lista de dicionários com id, created_at
+            Lista de dicionários com id, created_at, input_data (resumido)
         """
         conn = sqlite3.connect(str(self.db_path))
         cursor = conn.cursor()
         
         cursor.execute(
-            "SELECT id, created_at FROM results ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, created_at, input_data FROM results ORDER BY created_at DESC LIMIT ?",
             (limit,)
         )
         
         rows = cursor.fetchall()
         conn.close()
         
-        return [{"id": row[0], "created_at": row[1]} for row in rows]
+        results = []
+        for row in rows:
+            input_data = json.loads(row[2])
+            results.append({
+                "id": row[0],
+                "created_at": row[1],
+                "município": input_data.get("município", "N/A"),
+                "correção_até": input_data.get("correção_até", "N/A")
+            })
+        
+        return results
+    
+    def delete_result(self, result_id: str) -> bool:
+        """
+        Deleta um resultado pelo ID.
+        
+        Args:
+            result_id: ID do resultado a deletar
+        
+        Returns:
+            True se deletado com sucesso, False se não encontrado
+        """
+        conn = sqlite3.connect(str(self.db_path))
+        cursor = conn.cursor()
+        
+        cursor.execute("DELETE FROM results WHERE id = ?", (result_id,))
+        
+        deleted = cursor.rowcount > 0
+        conn.commit()
+        conn.close()
+        
+        return deleted

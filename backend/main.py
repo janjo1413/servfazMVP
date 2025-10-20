@@ -122,13 +122,13 @@ def calculate(input_data: CalculateInput):
         try:
             selic_value = selic_api.ensure_selic(input_data.correção_até)
             if selic_value:
-                print(f"✅ SELIC encontrada: {selic_value}%")
+                print(f"SELIC encontrada: {selic_value}%")
         except Exception as selic_error:
             print(f"⚠️ Aviso SELIC: {str(selic_error)}")
             # Continuar mesmo sem SELIC (planilha pode ter dados suficientes)
         
         # 2. Executar cálculo no Excel
-        print(f"📊 Abrindo Excel: {EXCEL_PATH}")
+        print(f"Abrindo Excel: {EXCEL_PATH}")
         
         with ExcelRunner(EXCEL_PATH, MAPA_CELULAS_PATH) as runner:
             # Escrever inputs
@@ -136,26 +136,26 @@ def calculate(input_data: CalculateInput):
             runner.write_inputs(input_data.dict())
             
             # Calcular
-            print("🔄 Executando cálculo...")
+            print("Executando cálculo...")
             runner.calculate()
             
             # Ler resultados
             print("📖 Lendo resultados das tabelas...")
             results = runner.read_results()
         
-        print(f"✅ {len(results)} blocos de tabela lidos com sucesso")
+        print(f"{len(results)} blocos de tabela lidos com sucesso")
         
         # 3. Aplicar atualização SELIC (se data > 01/01/2025)
         results_atualizados = None
         if selic_updater.precisa_atualizacao(input_data.correção_até):
-            print(f"🔄 Aplicando atualização SELIC para {input_data.correção_até}...")
+            print(f"Aplicando atualização SELIC para {input_data.correção_até}...")
             results_atualizados = selic_updater.atualizar_resultados(results, input_data.correção_até)
-            print(f"✅ Resultados atualizados com SELIC gerados")
+            print(f"Resultados atualizados com SELIC gerados")
         else:
-            print(f"ℹ️ Data de correção ≤ 01/01/2025. Sem atualização SELIC.")
+            print(f"Data de correção ≤ 01/01/2025. Sem atualização SELIC.")
         
         # 4. Preparar resposta
-        created_at = datetime.utcnow().isoformat()
+        created_at = datetime.now().isoformat()
         
         output_data = {
             "results_base": results,
@@ -189,7 +189,7 @@ def calculate(input_data: CalculateInput):
             detail=f"Planilha não encontrada: {EXCEL_PATH}"
         )
     except Exception as e:
-        print(f"❌ Erro no cálculo: {str(e)}")
+        print(f"Erro no cálculo: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao processar cálculo: {str(e)}"
@@ -219,6 +219,22 @@ def list_results(limit: int = 100):
     """
     results = storage.list_results(limit=limit)
     return {"results": results, "count": len(results)}
+
+
+@app.delete("/results/{result_id}")
+def delete_result(result_id: str):
+    """
+    Deleta um resultado específico pelo ID.
+    """
+    success = storage.delete_result(result_id)
+    
+    if not success:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Resultado não encontrado: {result_id}"
+        )
+    
+    return {"message": f"Resultado {result_id} deletado com sucesso"}
 
 
 if __name__ == "__main__":

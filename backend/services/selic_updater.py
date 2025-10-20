@@ -151,7 +151,7 @@ class SelicUpdater:
         if not meses_selic:
             return results
         
-        print(f"📊 Aplicando SELIC de {meses_selic[0]} a {meses_selic[-1]} ({len(meses_selic)} meses)")
+        print(f"Aplicando SELIC de {meses_selic[0]} a {meses_selic[-1]} ({len(meses_selic)} meses)")
         
         # Criar cópia profunda dos resultados
         results_atualizados = []

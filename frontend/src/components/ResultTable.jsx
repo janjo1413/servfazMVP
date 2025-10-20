@@ -176,7 +176,7 @@ function ResultTable({ results }) {
       {/* Resultados Base (sempre mostrados) */}
       {renderTables(
         results.results_base,
-        '📊 Resultados Base (01/01/2025)',
+        'Resultados Base (01/01/2025)',
         'bg-blue-50',
         'border-blue-500',
         'text-blue-700'
@@ -188,7 +188,7 @@ function ResultTable({ results }) {
           <div className="border-t-4 border-purple-300 my-12"></div>
           {renderTables(
             results.results_atualizados,
-            `🔄 Resultados Atualizados com SELIC (até ${results.correcao_ate})`,
+            `Resultados Atualizados com SELIC (até ${results.correcao_ate})`,
             'bg-purple-50',
             'border-purple-500',
             'text-purple-700'

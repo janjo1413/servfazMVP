@@ -23,5 +23,5 @@ def init_database(db_path: str = "./data/results.db") -> Storage:
         Instância do Storage
     """
     storage = Storage(db_path)
-    print(f"✅ Banco de dados inicializado: {db_path}")
+    print(f"Banco de dados inicializado: {db_path}")
     return storage

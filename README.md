@@ -11,9 +11,24 @@ O usuário preenche um formulário web, os dados são escritos automaticamente n
 - ✅ **Formulário Web Intuitivo**: 10 campos incluindo datas, honorários e deságios
 - ✅ **Integração Completa com Excel**: Escrita/leitura via xlwings mantendo todas as fórmulas ativas
 - ✅ **Validação Automática de SELIC**: Consulta API do Banco Central com cache local
-- ✅ **17 Tabelas de Resultados**: Diferentes metodologias de cálculo (NT7, NT36, IASA, etc.)
+- ✅ **Atualização SELIC Mensal**: Campo "Correção até" funcional com aplicação automática de SELIC
+- ✅ **Resultados Duplos**: Base (01/01/2025) + Atualizados com SELIC (se data > 01/01/2025)
+- ✅ **17 Tabelas de Resultados**: Diferentes metodologias de cálculo (NT7, NT36, JASA, etc.)
 - ✅ **Persistência em SQLite**: Histórico completo de todos os cálculos
 - ✅ **Interface Responsiva**: React + TailwindCSS com formatação pt-BR
+
+## 🆕 Novidade: Atualização SELIC Automática
+
+O campo **"Correção até"** agora é totalmente funcional! 
+
+### Como funciona:
+- **Data ≤ 01/01/2025**: Mostra apenas resultados base da planilha
+- **Data > 01/01/2025**: Mostra resultados base **+ resultados atualizados com SELIC mensal**
+
+### Exemplo:
+Usuário escolhe `01/03/2025` → Sistema aplica SELIC de fevereiro e março/2025 sobre os valores base.
+
+📖 **Leia mais**: [INSTRUCOES_USO_SELIC.md](./INSTRUCOES_USO_SELIC.md) | [FUNCIONALIDADE_SELIC.md](./FUNCIONALIDADE_SELIC.md)
 
 ## 🔄 Fluxo de Dados
 

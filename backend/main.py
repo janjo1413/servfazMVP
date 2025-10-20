@@ -32,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from database import init_database
 from services.excel_runner import ExcelRunner
 from services.selic_api import SelicAPI
+from services.selic_updater import SelicUpdater
 
 
 # Configuração de caminhos
@@ -66,7 +67,9 @@ class TableBlock(BaseModel):
 class CalculateResult(BaseModel):
     id: str
     created_at: str
-    results: List[TableBlock]
+    correcao_ate: str
+    results_base: List[TableBlock]  # Resultados fixos da planilha (01/01/2025)
+    results_atualizados: Optional[List[TableBlock]] = None  # Resultados com SELIC aplicada (se data > 01/01/2025)
 
 
 # Inicialização do FastAPI
@@ -88,6 +91,7 @@ app.add_middleware(
 # Inicializar banco de dados
 storage = init_database(DATABASE_PATH)
 selic_api = SelicAPI(SELIC_CACHE_PATH)
+selic_updater = SelicUpdater(SELIC_CACHE_PATH)
 
 
 @app.get("/")
@@ -141,25 +145,38 @@ def calculate(input_data: CalculateInput):
         
         print(f"✅ {len(results)} blocos de tabela lidos com sucesso")
         
-        # 3. Preparar resposta
+        # 3. Aplicar atualização SELIC (se data > 01/01/2025)
+        results_atualizados = None
+        if selic_updater.precisa_atualizacao(input_data.correção_até):
+            print(f"🔄 Aplicando atualização SELIC para {input_data.correção_até}...")
+            results_atualizados = selic_updater.atualizar_resultados(results, input_data.correção_até)
+            print(f"✅ Resultados atualizados com SELIC gerados")
+        else:
+            print(f"ℹ️ Data de correção ≤ 01/01/2025. Sem atualização SELIC.")
+        
+        # 4. Preparar resposta
         created_at = datetime.utcnow().isoformat()
         
         output_data = {
-            "results": results
+            "results_base": results,
+            "results_atualizados": results_atualizados,
+            "correcao_ate": input_data.correção_até
         }
         
-        # 4. Salvar no banco
+        # 5. Salvar no banco
         print("💾 Salvando no banco de dados...")
         result_id = storage.save_result(
             input_data=input_data.dict(),
             output_data=output_data
         )
         
-        # 5. Retornar resposta
+        # 6. Retornar resposta
         response = {
             "id": result_id,
             "created_at": created_at,
-            "results": results
+            "correcao_ate": input_data.correção_até,
+            "results_base": results,
+            "results_atualizados": results_atualizados
         }
         
         print(f"🎉 Cálculo concluído! ID: {result_id}")

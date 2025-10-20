@@ -1,0 +1,616 @@
+{
+  "selic_cells": [
+    {
+      "cell": "A21",
+      "value": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A21",
+      "formula": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "B22",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!N126"
+    },
+    {
+      "cell": "C22",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!O126"
+    },
+    {
+      "cell": "D22",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!P126"
+    },
+    {
+      "cell": "E22",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!Q126"
+    },
+    {
+      "cell": "B23",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!N127"
+    },
+    {
+      "cell": "C23",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!O127"
+    },
+    {
+      "cell": "D23",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!P127"
+    },
+    {
+      "cell": "E23",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!Q127"
+    },
+    {
+      "cell": "A26",
+      "value": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje - COM ANATOCISMO - MÉTODO CNJ)"
+    },
+    {
+      "cell": "A26",
+      "formula": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje - COM ANATOCISMO - MÉTODO CNJ)"
+    },
+    {
+      "cell": "B28",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC ANAT'!N127"
+    },
+    {
+      "cell": "C28",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC ANAT'!O127+'NT7 IPCA SELIC IPCA SELIC ANAT'!Q127"
+    },
+    {
+      "cell": "D28",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC ANAT'!R127"
+    },
+    {
+      "cell": "E28",
+      "formula": "='NT7 IPCA SELIC IPCA SELIC'!Q132"
+    },
+    {
+      "cell": "A31",
+      "value": "NT36 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A31",
+      "formula": "NT36 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "B33",
+      "formula": "='NT6 IPCA SELIC IPCA SELIC'!N127"
+    },
+    {
+      "cell": "C33",
+      "formula": "='NT6 IPCA SELIC IPCA SELIC'!O127"
+    },
+    {
+      "cell": "D33",
+      "formula": "='NT6 IPCA SELIC IPCA SELIC'!P127"
+    },
+    {
+      "cell": "E33",
+      "formula": "='NT6 IPCA SELIC IPCA SELIC'!Q127"
+    },
+    {
+      "cell": "A36",
+      "value": "JASA (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A36",
+      "formula": "JASA (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "B38",
+      "formula": "='JASA IPCA SELIC IPCA SELIC'!N127"
+    },
+    {
+      "cell": "C38",
+      "formula": "='JASA IPCA SELIC IPCA SELIC'!O127"
+    },
+    {
+      "cell": "D38",
+      "formula": "='JASA IPCA SELIC IPCA SELIC'!P127"
+    },
+    {
+      "cell": "E38",
+      "formula": "='JASA IPCA SELIC IPCA SELIC'!Q127"
+    },
+    {
+      "cell": "A41",
+      "value": "NT7 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A41",
+      "formula": "NT7 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A46",
+      "value": "NT36 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A46",
+      "formula": "NT36 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A51",
+      "value": "JASA TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A51",
+      "formula": "JASA TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A56",
+      "value": "NT7 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A56",
+      "formula": "NT7 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "B58",
+      "formula": "='NT7 IPCAE SELIC IPCA SELIC'!N127"
+    },
+    {
+      "cell": "C58",
+      "formula": "='NT7 IPCAE SELIC IPCA SELIC'!O127"
+    },
+    {
+      "cell": "D58",
+      "formula": "='NT7 IPCAE SELIC IPCA SELIC'!P127"
+    },
+    {
+      "cell": "E58",
+      "formula": "='NT7 IPCAE SELIC IPCA SELIC'!Q127"
+    },
+    {
+      "cell": "A61",
+      "value": "NT36 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A61",
+      "formula": "NT36 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A71",
+      "value": "JASA IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A71",
+      "formula": "JASA IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)"
+    },
+    {
+      "cell": "A76",
+      "value": "NT7 SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "A76",
+      "formula": "NT7 SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "B78",
+      "formula": "='NT7 SELIC'!N127"
+    },
+    {
+      "cell": "C78",
+      "formula": "='NT7 SELIC'!O127"
+    },
+    {
+      "cell": "D78",
+      "formula": "='NT7 SELIC'!P127"
+    },
+    {
+      "cell": "E78",
+      "formula": "='NT7 SELIC'!Q127"
+    },
+    {
+      "cell": "A81",
+      "value": "NT36 SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "A81",
+      "formula": "NT36 SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "B83",
+      "formula": "='NT6 SELIC'!N127"
+    },
+    {
+      "cell": "C83",
+      "formula": "='NT6 SELIC'!O127"
+    },
+    {
+      "cell": "D83",
+      "formula": "='NT6 SELIC'!P127"
+    },
+    {
+      "cell": "E83",
+      "formula": "='NT6 SELIC'!Q127"
+    },
+    {
+      "cell": "A86",
+      "value": "JASA SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "A86",
+      "formula": "JASA SELIC (SELIC desde quando devido até hoje)"
+    },
+    {
+      "cell": "B88",
+      "formula": "='JASA SELIC'!N127"
+    },
+    {
+      "cell": "C88",
+      "formula": "='JASA SELIC'!O127"
+    },
+    {
+      "cell": "D88",
+      "formula": "='JASA SELIC'!P127"
+    },
+    {
+      "cell": "E88",
+      "formula": "='JASA SELIC'!Q127"
+    },
+    {
+      "cell": "A91",
+      "value": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje COM Anatocismo"
+    },
+    {
+      "cell": "A91",
+      "formula": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje COM Anatocismo"
+    },
+    {
+      "cell": "B93",
+      "formula": "='NT7 IPCAE 1% SELIC EC Anat'!N127"
+    },
+    {
+      "cell": "C93",
+      "formula": "='NT7 IPCAE 1% SELIC EC Anat'!O127"
+    },
+    {
+      "cell": "D93",
+      "formula": "='NT7 IPCAE 1% SELIC EC Anat'!Q127"
+    },
+    {
+      "cell": "E93",
+      "formula": "='NT7 IPCAE 1% SELIC EC Anat'!R127"
+    },
+    {
+      "cell": "A96",
+      "value": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo"
+    },
+    {
+      "cell": "A96",
+      "formula": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo"
+    },
+    {
+      "cell": "B98",
+      "formula": "='NT7 IPCAE 1% SELIC EC S Anat'!N127"
+    },
+    {
+      "cell": "C98",
+      "formula": "='NT7 IPCAE 1% SELIC EC S Anat'!O127"
+    },
+    {
+      "cell": "D98",
+      "formula": "='NT7 IPCAE 1% SELIC EC S Anat'!P127"
+    },
+    {
+      "cell": "E98",
+      "formula": "='NT7 IPCAE 1% SELIC EC S Anat'!Q127"
+    },
+    {
+      "cell": "A101",
+      "value": "NT36 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo"
+    },
+    {
+      "cell": "A101",
+      "formula": "NT36 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo"
+    },
+    {
+      "cell": "B103",
+      "formula": "='NT36 IPCAE 1% SELIC EC Anat'!N127"
+    },
+    {
+      "cell": "C103",
+      "formula": "='NT36 IPCAE 1% SELIC EC Anat'!O127"
+    },
+    {
+      "cell": "D103",
+      "formula": "='NT36 IPCAE 1% SELIC EC Anat'!Q127"
+    },
+    {
+      "cell": "E103",
+      "formula": "='NT36 IPCAE 1% SELIC EC Anat'!R127"
+    }
+  ],
+  "correcao_monetaria_columns": [],
+  "tabelas_afetadas": [
+    {
+      "titulo": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 21,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje - COM ANATOCISMO - MÉTODO CNJ)",
+      "linha_inicio": 26,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 31,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "JASA (IPCA + 0,5% até 12/2002 / SELIC de 01/2003 a 06/2009 / IPCA + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 36,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 41,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 46,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "JASA TR (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / TR + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 51,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 56,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 61,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 IPCA-E + Juros 1%a.m. (IPCA + 1% desde quando devido até até hoje)",
+      "linha_inicio": 66,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "JASA IPCA-E (IPCA + 0,5% até 12/2002 / IPCA-E de 01/2003 a 06/2009 + 1% / IPCA-E + V. Poupança de 07/2009 a 11/2021 / SELIC de 12/2021 até hoje)",
+      "linha_inicio": 71,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 SELIC (SELIC desde quando devido até hoje)",
+      "linha_inicio": 76,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 SELIC (SELIC desde quando devido até hoje)",
+      "linha_inicio": 81,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "JASA SELIC (SELIC desde quando devido até hoje)",
+      "linha_inicio": 86,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje COM Anatocismo",
+      "linha_inicio": 91,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT7 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo",
+      "linha_inicio": 96,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    },
+    {
+      "titulo": "NT36 IPCA-E + Juros 1%a.m. té até 11/2021; SELIC de 12/2021 até hoje SEM Anatocismo",
+      "linha_inicio": 101,
+      "colunas_selic": [
+        "C",
+        "D"
+      ],
+      "header": [
+        "Descrição",
+        "Valor Corrigido Mensal",
+        "Valor dos Juros Mensal",
+        "Valor Atualizado",
+        "Honorários",
+        "Honorários em Valor Fixo",
+        "Honorários s/Vlr da Causa"
+      ]
+    }
+  ]
+}

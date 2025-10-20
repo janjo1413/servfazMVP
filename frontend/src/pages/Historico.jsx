@@ -106,7 +106,7 @@ function Historico() {
         <div className="mb-6">
           <button
             onClick={handleVoltar}
-            className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+            className="flex items-center text-slate-700 hover:text-slate-900 font-medium"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -175,7 +175,7 @@ function Historico() {
       {/* Loading */}
       {loading && (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
         </div>
       )}
 
@@ -262,7 +262,7 @@ function Historico() {
                       <div className="flex justify-end gap-3">
                         <button
                           onClick={() => handleVerDetalhes(calculo.id)}
-                          className="inline-flex items-center px-3 py-1.5 border border-blue-300 rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 border border-slate-300 rounded-md text-slate-700 bg-slate-50 hover:bg-slate-100 transition-colors"
                           title="Ver Detalhes"
                         >
                           <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,7 +273,7 @@ function Historico() {
                         </button>
                         <button
                           onClick={() => handleAtualizarSelic(calculo.id)}
-                          className="inline-flex items-center px-3 py-1.5 border border-green-300 rounded-md text-green-700 bg-green-50 hover:bg-green-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 border border-amber-300 rounded-md text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors"
                           title="Atualizar para SELIC Atual"
                         >
                           <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,7 +283,7 @@ function Historico() {
                         </button>
                         <button
                           onClick={() => handleDeletar(calculo.id)}
-                          className="inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md text-red-700 bg-red-50 hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md text-red-800 bg-red-50 hover:bg-red-100 transition-colors"
                           title="Deletar Cálculo"
                         >
                           <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -15,3 +15,7 @@ npm run dev
 ## Acessar
 - Frontend: http://localhost:3000
 - API Docs: http://127.0.0.1:8000/docs
+
+## Navegação
+- 📊 Gerar Cálculo (http://localhost:3000/)
+- 📜 Histórico de Cálculos (http://localhost:3000/historico)

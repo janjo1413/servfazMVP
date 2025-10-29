@@ -117,15 +117,31 @@ def calculate(input_data: CalculateInput):
     5. Salva no banco e retorna JSON
     """
     try:
-        # 1. Validar e garantir dados SELIC
-        print(f"📅 Validando SELIC para: {input_data.correção_até}")
-        try:
-            selic_value = selic_api.ensure_selic(input_data.correção_até)
-            if selic_value:
-                print(f"SELIC encontrada: {selic_value}%")
-        except Exception as selic_error:
-            print(f"⚠️ Aviso SELIC: {str(selic_error)}")
-            # Continuar mesmo sem SELIC (planilha pode ter dados suficientes)
+        # 1. Validar e garantir dados SELIC (OBRIGATÓRIO para datas > 01/01/2025)
+        print(f"Validando SELIC para: {input_data.correção_até}")
+        
+        # Verificar se precisa de SELIC da API (data > 01/01/2025)
+        if selic_updater.precisa_atualizacao(input_data.correção_até):
+            # CRÍTICO: Planilha tem SELIC fixa (1.00%) após 01/01/2025
+            # Sistema DEVE buscar valores reais da API
+            try:
+                selic_value = selic_api.ensure_selic(input_data.correção_até)
+                if selic_value:
+                    print(f"SELIC encontrada: {selic_value}%")
+                else:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"SELIC não encontrada para {input_data.correção_até}. Não é possível calcular sem dados SELIC atualizados."
+                    )
+            except HTTPException:
+                raise  # Re-lançar HTTPException
+            except Exception as selic_error:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Erro ao buscar SELIC: {str(selic_error)}. Sistema não pode continuar sem SELIC atualizada para datas > 01/01/2025."
+                )
+        else:
+            print(f"Data ≤ 01/01/2025. Usando dados da planilha (sem SELIC adicional)")
         
         # 2. Executar cálculo no Excel
         print(f"Abrindo Excel: {EXCEL_PATH}")
@@ -149,8 +165,15 @@ def calculate(input_data: CalculateInput):
         results_atualizados = None
         if selic_updater.precisa_atualizacao(input_data.correção_até):
             print(f"Aplicando atualização SELIC para {input_data.correção_até}...")
-            results_atualizados = selic_updater.atualizar_resultados(results, input_data.correção_até)
-            print(f"Resultados atualizados com SELIC gerados")
+            try:
+                results_atualizados = selic_updater.atualizar_resultados(results, input_data.correção_até)
+                print(f"Resultados atualizados com SELIC gerados")
+            except ValueError as selic_error:
+                # Erro ao aplicar SELIC (falta de dados)
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Erro na atualização SELIC: {str(selic_error)}"
+                )
         else:
             print(f"Data de correção ≤ 01/01/2025. Sem atualização SELIC.")
         

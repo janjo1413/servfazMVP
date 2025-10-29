@@ -105,17 +105,17 @@ class SelicUpdater:
             selic_mensal = self.selic_api.get_selic_for_month(mes)
             
             if selic_mensal is None:
-                # Se não tiver SELIC para o mês, tentar buscar da API
-                try:
-                    selic_mensal = self.selic_api.ensure_selic(f"01/{mes.split('-')[1]}/{mes.split('-')[0]}")
-                except:
-                    # Se não conseguir, usar 0 (sem correção)
-                    selic_mensal = 0
+                # CRÍTICO: Não temos SELIC para este mês
+                # NÃO podemos usar 0 pois isso distorceria o cálculo
+                raise ValueError(
+                    f"SELIC não encontrada para o mês {mes}. "
+                    f"Sistema não pode calcular sem dados SELIC completos. "
+                    f"Verifique se o cache está atualizado ou se a API do Banco Central está acessível."
+                )
             
             # Aplicar SELIC: valor_atual * (1 + selic/100)
-            if selic_mensal and selic_mensal != 0:
-                fator = 1 + (selic_mensal / 100)
-                valor_atual = valor_atual * fator
+            fator = 1 + (selic_mensal / 100)
+            valor_atual = valor_atual * fator
         
         return valor_atual
     
@@ -152,6 +152,15 @@ class SelicUpdater:
             return results
         
         print(f"Aplicando SELIC de {meses_selic[0]} a {meses_selic[-1]} ({len(meses_selic)} meses)")
+        
+        # Validar que temos SELIC para todos os meses necessários
+        for mes in meses_selic:
+            if self.selic_api.get_selic_for_month(mes) is None:
+                raise ValueError(
+                    f"SELIC não disponível para {mes}. "
+                    f"Não é possível calcular valores atualizados sem todos os dados SELIC. "
+                    f"Verifique a conexão com a API do Banco Central."
+                )
         
         # Criar cópia profunda dos resultados
         results_atualizados = []

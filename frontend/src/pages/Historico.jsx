@@ -71,9 +71,108 @@ function Historico() {
     }
   };
 
-  const handleAtualizarSelic = (calculoId) => {
-    // Placeholder - funcionalidade futura
-    alert('Funcionalidade "Atualizar para SELIC Atual" será implementada em breve!');
+  const handleAtualizarSelic = async (calculoId) => {
+    // Confirmar com o usuário
+    if (!confirm('Deseja atualizar este cálculo para a última data SELIC disponível?')) {
+      return;
+    }
+
+    // Encontrar o botão e mostrar loading
+    const botaoElement = event.target.closest('button');
+    const textoOriginal = botaoElement.innerHTML;
+    botaoElement.disabled = true;
+    botaoElement.innerHTML = `
+      <svg class="animate-spin h-4 w-4 mr-1.5 inline" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Atualizando...
+    `;
+
+    try {
+      const response = await fetch(`/api/results/${calculoId}/atualizar`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Erro específico: já está atualizado
+        if (response.status === 400) {
+          // Extrair mês/ano da mensagem de erro
+          const match = data.detail.match(/\(([^)]+)\)/);
+          const mesAno = match ? match[1] : 'o mês mais recente';
+          
+          // Mostrar modal customizado
+          mostrarModalJaAtualizado(mesAno);
+          return;
+        }
+        
+        throw new Error(data.detail || 'Erro ao atualizar cálculo');
+      }
+
+      // Sucesso: redirecionar para ver detalhes
+      alert(`Cálculo atualizado com sucesso!\nDe: ${data.data_anterior}\nPara: ${data.data_nova}`);
+      handleVerDetalhes(calculoId);
+      
+    } catch (err) {
+      alert(`Erro: ${err.message}`);
+    } finally {
+      // Restaurar botão
+      if (botaoElement) {
+        botaoElement.disabled = false;
+        botaoElement.innerHTML = textoOriginal;
+      }
+    }
+  };
+
+  const mostrarModalJaAtualizado = (mesAno) => {
+    // Criar modal customizado
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    modal.innerHTML = `
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100">
+            <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Cálculo já atualizado</h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500">
+              Este cálculo já está atualizado para o mês mais recente disponível:
+            </p>
+            <p class="text-base font-semibold text-gray-900 mt-2">
+              ${mesAno}
+            </p>
+          </div>
+          <div class="items-center px-4 py-3">
+            <button
+              id="modal-ok-btn"
+              class="px-4 py-2 bg-amber-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Adicionar event listener para fechar
+    const botaoOk = modal.querySelector('#modal-ok-btn');
+    const fecharModal = () => {
+      document.body.removeChild(modal);
+    };
+    
+    botaoOk.addEventListener('click', fecharModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        fecharModal();
+      }
+    });
   };
 
   const handleVoltar = () => {
@@ -128,6 +227,12 @@ function Historico() {
               <p className="text-sm text-gray-600">Data de Criação</p>
               <p className="font-medium">{formatDate(selectedCalculo.created_at)}</p>
             </div>
+            {selectedCalculo.updated_at && (
+              <div className="md:col-span-2">
+                <p className="text-sm text-gray-600">Última Atualização</p>
+                <p className="font-medium text-amber-700">{formatDate(selectedCalculo.updated_at)}</p>
+              </div>
+            )}
             {selectedCalculo.input_data && (
               <>
                 <div>
@@ -136,7 +241,14 @@ function Historico() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Correção até</p>
-                  <p className="font-medium">{selectedCalculo.input_data.correção_até}</p>
+                  <p className="font-medium">
+                    {selectedCalculo.output_data?.correcao_ate || selectedCalculo.input_data.correção_até}
+                    {selectedCalculo.output_data?.correcao_anterior && (
+                      <span className="text-sm text-gray-500 ml-2">
+                        (Antes era {selectedCalculo.output_data.correcao_anterior})
+                      </span>
+                    )}
+                  </p>
                 </div>
               </>
             )}
@@ -227,16 +339,16 @@ function Historico() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Data
+                    Criado em
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Atualizado em
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Município
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Correção até
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ID
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Ações
@@ -249,14 +361,20 @@ function Historico() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {formatDate(calculo.created_at)}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {calculo.updated_at ? (
+                        <span className="text-amber-700 font-medium">
+                          {formatDate(calculo.updated_at)}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {calculo.município}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {calculo.correção_até}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                      {calculo.id.substring(0, 8)}...
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-3">

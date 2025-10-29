@@ -36,10 +36,17 @@ class Storage:
             CREATE TABLE IF NOT EXISTS results (
                 id TEXT PRIMARY KEY,
                 created_at TEXT NOT NULL,
+                updated_at TEXT,
                 input_data TEXT NOT NULL,
                 output_data TEXT NOT NULL
             )
         """)
+        
+        # Adicionar coluna updated_at em bancos existentes (migration)
+        cursor.execute("PRAGMA table_info(results)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if 'updated_at' not in columns:
+            cursor.execute("ALTER TABLE results ADD COLUMN updated_at TEXT")
         
         conn.commit()
         conn.close()
@@ -82,13 +89,13 @@ class Storage:
         Recupera um resultado pelo ID.
         
         Returns:
-            Dicionário com id, created_at, input_data, output_data ou None
+            Dicionário com id, created_at, updated_at, input_data, output_data ou None
         """
         conn = sqlite3.connect(str(self.db_path))
         cursor = conn.cursor()
         
         cursor.execute(
-            "SELECT id, created_at, input_data, output_data FROM results WHERE id = ?",
+            "SELECT id, created_at, updated_at, input_data, output_data FROM results WHERE id = ?",
             (result_id,)
         )
         
@@ -99,8 +106,9 @@ class Storage:
             return {
                 "id": row[0],
                 "created_at": row[1],
-                "input_data": json.loads(row[2]),
-                "output_data": json.loads(row[3])
+                "updated_at": row[2],
+                "input_data": json.loads(row[3]),
+                "output_data": json.loads(row[4])
             }
         
         return None
@@ -113,13 +121,13 @@ class Storage:
             limit: Número máximo de resultados a retornar
         
         Returns:
-            Lista de dicionários com id, created_at, input_data (resumido)
+            Lista de dicionários com id, created_at, updated_at, input_data (resumido)
         """
         conn = sqlite3.connect(str(self.db_path))
         cursor = conn.cursor()
         
         cursor.execute(
-            "SELECT id, created_at, input_data FROM results ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, created_at, updated_at, input_data FROM results ORDER BY created_at DESC LIMIT ?",
             (limit,)
         )
         
@@ -128,10 +136,11 @@ class Storage:
         
         results = []
         for row in rows:
-            input_data = json.loads(row[2])
+            input_data = json.loads(row[3])
             results.append({
                 "id": row[0],
                 "created_at": row[1],
+                "updated_at": row[2],
                 "município": input_data.get("município", "N/A"),
                 "correção_até": input_data.get("correção_até", "N/A")
             })
@@ -158,3 +167,35 @@ class Storage:
         conn.close()
         
         return deleted
+    
+    def update_result(self, result_id: str, output_data: Dict[str, Any]) -> bool:
+        """
+        Atualiza apenas o output_data de um resultado existente.
+        Mantém created_at original e atualiza updated_at.
+        
+        Args:
+            result_id: ID do resultado a atualizar
+            output_data: Novos dados de saída
+        
+        Returns:
+            True se atualizado com sucesso, False se não encontrado
+        """
+        updated_at = datetime.now().isoformat()
+        
+        conn = sqlite3.connect(str(self.db_path))
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            "UPDATE results SET output_data = ?, updated_at = ? WHERE id = ?",
+            (
+                json.dumps(output_data, ensure_ascii=False),
+                updated_at,
+                result_id
+            )
+        )
+        
+        updated = cursor.rowcount > 0
+        conn.commit()
+        conn.close()
+        
+        return updated

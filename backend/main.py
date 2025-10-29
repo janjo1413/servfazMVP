@@ -260,6 +260,145 @@ def delete_result(result_id: str):
     return {"message": f"Resultado {result_id} deletado com sucesso"}
 
 
+@app.get("/selic/ultima-data")
+def get_ultima_data_selic():
+    """
+    Retorna a última data de SELIC disponível no cache.
+    """
+    try:
+        # Buscar último mês no cache
+        meses = list(selic_api.cache.keys())
+        if not meses:
+            raise HTTPException(
+                status_code=500,
+                detail="Cache SELIC vazio. Execute a atualização da API."
+            )
+        
+        # Ordenar e pegar o último
+        meses.sort()
+        ultimo_mes = meses[-1]  # Formato: "YYYY-MM"
+        
+        # Converter para DD/MM/YYYY (sempre dia 01)
+        ano, mes = ultimo_mes.split('-')
+        ultima_data = f"01/{mes}/{ano}"
+        
+        return {
+            "ultima_data": ultima_data,
+            "mes": ultimo_mes,
+            "taxa": selic_api.cache[ultimo_mes]
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao buscar última data SELIC: {str(e)}"
+        )
+
+
+@app.post("/results/{result_id}/atualizar")
+def atualizar_resultado(result_id: str):
+    """
+    Atualiza um resultado existente para a última data SELIC disponível.
+    
+    1. Busca o resultado original
+    2. Verifica a última data SELIC disponível
+    3. Se já está atualizado, retorna erro
+    4. Caso contrário, recalcula com a nova data
+    5. Atualiza o registro mantendo created_at original
+    """
+    try:
+        # 1. Buscar resultado original
+        resultado = storage.get_result(result_id)
+        
+        if not resultado:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Resultado não encontrado: {result_id}"
+            )
+        
+        # 2. Buscar última data SELIC
+        meses = list(selic_api.cache.keys())
+        if not meses:
+            raise HTTPException(
+                status_code=500,
+                detail="Cache SELIC vazio"
+            )
+        
+        meses.sort()
+        ultimo_mes = meses[-1]
+        ano, mes = ultimo_mes.split('-')
+        ultima_data_selic = f"01/{mes}/{ano}"
+        
+        # 3. Verificar se já está atualizado
+        correcao_atual = resultado['output_data'].get('correcao_ate')
+        
+        if correcao_atual == ultima_data_selic:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cálculo já está atualizado para o mês mais recente ({mes}/{ano})"
+            )
+        
+        # 4. Recalcular com nova data
+        input_data = resultado['input_data']
+        input_data['correção_até'] = ultima_data_selic
+        
+        print(f"Atualizando cálculo {result_id} de {correcao_atual} para {ultima_data_selic}")
+        
+        # Executar cálculo no Excel (mesmos inputs, só muda data de correção)
+        with ExcelRunner(EXCEL_PATH, MAPA_CELULAS_PATH) as runner:
+            runner.write_inputs(input_data)
+            runner.calculate()
+            results = runner.read_results()
+        
+        # Aplicar SELIC atualizada
+        results_atualizados = None
+        if selic_updater.precisa_atualizacao(ultima_data_selic):
+            try:
+                results_atualizados = selic_updater.atualizar_resultados(results, ultima_data_selic)
+            except ValueError as selic_error:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Erro na atualização SELIC: {str(selic_error)}"
+                )
+        
+        # 5. Preparar novo output_data com histórico
+        novo_output_data = {
+            "results_base": results,
+            "results_atualizados": results_atualizados,
+            "correcao_ate": ultima_data_selic,
+            "correcao_anterior": correcao_atual  # Guardar data anterior
+        }
+        
+        # 6. Atualizar no banco (mantém created_at, atualiza updated_at)
+        success = storage.update_result(result_id, novo_output_data)
+        
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail="Falha ao atualizar resultado no banco"
+            )
+        
+        print(f"Cálculo {result_id} atualizado com sucesso!")
+        
+        # 7. Retornar resultado atualizado
+        resultado_atualizado = storage.get_result(result_id)
+        
+        return {
+            "message": "Cálculo atualizado com sucesso",
+            "data_anterior": correcao_atual,
+            "data_nova": ultima_data_selic,
+            "resultado": resultado_atualizado
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro ao atualizar resultado: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao atualizar cálculo: {str(e)}"
+        )
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

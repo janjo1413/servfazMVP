@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ResultTable from '../components/ResultTable';
+import SelicPanel from '../components/SelicPanel';
 
 function GerarCalculo() {
   const [formData, setFormData] = useState({
@@ -58,6 +59,9 @@ function GerarCalculo() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Painel SELIC flutuante */}
+      <SelicPanel />
+      
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -170,7 +174,7 @@ function GerarCalculo() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-600"
               />
               <p className="text-xs text-gray-500 mt-1">
-                💡 Datas após 01/01/2025 aplicarão atualização SELIC mensal
+                Datas após 01/01/2025 aplicarão atualização SELIC mensal
               </p>
             </div>
 

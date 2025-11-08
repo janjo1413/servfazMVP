@@ -25,6 +25,9 @@ from datetime import datetime
 from pathlib import Path
 import os
 import sys
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 # Adicionar o diretório backend ao path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -94,14 +97,64 @@ selic_api = SelicAPI(SELIC_CACHE_PATH)
 selic_updater = SelicUpdater(SELIC_CACHE_PATH)
 
 
+# ============================================================================
+# SCHEDULER - Atualização automática de SELIC
+# ============================================================================
+def atualizar_selic_agendado():
+    """
+    Tarefa agendada que atualiza o cache de SELIC diariamente.
+    Executa todo dia às 6h da manhã.
+    """
+    print("=" * 60)
+    print(f"[SCHEDULER] Executando atualização automática de SELIC - {datetime.now()}")
+    print("=" * 60)
+    try:
+        selic_api.update_cache()
+        print("[SCHEDULER] ✅ Cache SELIC atualizado com sucesso!")
+    except Exception as e:
+        print(f"[SCHEDULER] ❌ Erro ao atualizar SELIC: {str(e)}")
+    print("=" * 60)
+
+
+# Criar scheduler em background
+scheduler = BackgroundScheduler()
+
+# Agendar atualização diária às 6h da manhã (horário de Brasília)
+scheduler.add_job(
+    func=atualizar_selic_agendado,
+    trigger=CronTrigger(hour=6, minute=0),  # Todo dia às 06:00
+    id='atualizar_selic',
+    name='Atualização automática de SELIC',
+    replace_existing=True
+)
+
+# Iniciar scheduler
+scheduler.start()
+print("[SCHEDULER] 🚀 Scheduler iniciado - Atualização automática de SELIC agendada para 06:00 diariamente")
+
+# Garantir que o scheduler seja desligado corretamente ao encerrar a aplicação
+atexit.register(lambda: scheduler.shutdown())
+# ============================================================================
+
+
 @app.get("/")
 def root():
     """Endpoint de health check."""
+    # Obter informações sobre o próximo agendamento
+    proxima_atualizacao = None
+    jobs = scheduler.get_jobs()
+    if jobs:
+        proxima_atualizacao = jobs[0].next_run_time.isoformat() if jobs[0].next_run_time else None
+    
     return {
         "status": "online",
-        "service": "ServFaz MVP",
+        "service": "RcJgJp MVP",
         "excel_path": EXCEL_PATH,
-        "database_path": DATABASE_PATH
+        "database_path": DATABASE_PATH,
+        "scheduler": {
+            "ativo": scheduler.running,
+            "proxima_atualizacao_selic": proxima_atualizacao
+        }
     }
 
 
@@ -291,6 +344,119 @@ def get_ultima_data_selic():
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao buscar última data SELIC: {str(e)}"
+        )
+
+
+@app.get("/selic/status")
+def get_selic_status():
+    """
+    Retorna informações completas sobre o cache de SELIC e scheduler.
+    Inclui lista dos últimos 12 meses com suas respectivas taxas.
+    """
+    try:
+        # Informações do cache
+        meses = [k for k in selic_api.cache.keys() if k != '_metadata']
+        meses.sort()
+        
+        total_meses = len(meses)
+        primeiro_mes = meses[0] if meses else None
+        ultimo_mes = meses[-1] if meses else None
+        
+        # Metadata
+        last_update = selic_api.cache_metadata.get('last_update')
+        
+        # Próxima atualização agendada
+        proxima_atualizacao = None
+        jobs = scheduler.get_jobs()
+        if jobs:
+            proxima_atualizacao = jobs[0].next_run_time.isoformat() if jobs[0].next_run_time else None
+        
+        # Últimos 12 meses com taxas (apenas a partir de 2025-01)
+        ultimos_12_meses = []
+        if meses:
+            # Filtrar apenas meses >= 2025-01
+            meses_desde_2025 = [m for m in meses if m >= '2025-01']
+            meses_recentes = meses_desde_2025[-12:] if len(meses_desde_2025) > 12 else meses_desde_2025
+            for mes in meses_recentes:
+                ultimos_12_meses.append({
+                    "mes": mes,
+                    "taxa": selic_api.cache.get(mes)
+                })
+        
+        return {
+            "cache": {
+                "total_meses": total_meses,
+                "primeiro_mes": primeiro_mes,
+                "ultimo_mes": ultimo_mes,
+                "ultima_atualizacao": last_update,
+                "taxa_ultimo_mes": selic_api.cache.get(ultimo_mes) if ultimo_mes else None
+            },
+            "scheduler": {
+                "ativo": scheduler.running,
+                "proxima_atualizacao": proxima_atualizacao,
+                "horario_agendado": "06:00 (diariamente)"
+            },
+            "ultimos_12_meses": ultimos_12_meses
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao buscar status SELIC: {str(e)}"
+        )
+        
+        # Próxima atualização agendada
+        proxima_atualizacao = None
+        jobs = scheduler.get_jobs()
+        if jobs:
+            proxima_atualizacao = jobs[0].next_run_time.isoformat() if jobs[0].next_run_time else None
+        
+        return {
+            "cache": {
+                "total_meses": total_meses,
+                "primeiro_mes": primeiro_mes,
+                "ultimo_mes": ultimo_mes,
+                "ultima_atualizacao": last_update,
+                "taxa_ultimo_mes": selic_api.cache.get(ultimo_mes) if ultimo_mes else None
+            },
+            "scheduler": {
+                "ativo": scheduler.running,
+                "proxima_atualizacao": proxima_atualizacao,
+                "horario_agendado": "06:00 (diariamente)"
+            }
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao buscar status SELIC: {str(e)}"
+        )
+
+
+@app.post("/selic/forcar-atualizacao")
+def forcar_atualizacao_selic():
+    """
+    Força atualização imediata do cache de SELIC (não precisa esperar o agendamento).
+    """
+    try:
+        print("🔄 Atualização manual de SELIC solicitada via API")
+        selic_api.update_cache()
+        
+        # Retornar status atualizado
+        meses = [k for k in selic_api.cache.keys() if k != '_metadata']
+        meses.sort()
+        ultimo_mes = meses[-1] if meses else None
+        
+        return {
+            "status": "sucesso",
+            "mensagem": "Cache SELIC atualizado com sucesso",
+            "total_meses": len(meses),
+            "ultimo_mes": ultimo_mes,
+            "taxa_ultimo_mes": selic_api.cache.get(ultimo_mes) if ultimo_mes else None,
+            "atualizado_em": selic_api.cache_metadata.get('last_update')
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao forçar atualização SELIC: {str(e)}"
         )
 
 

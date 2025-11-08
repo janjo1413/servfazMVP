@@ -1,5 +1,8 @@
 """
 Serviço de atualização de valores com SELIC.
+RcJgJp MVP
+Gerar Cálculo
+Histórico de Cálculos
 
 Aplica correção SELIC mensal progressiva sobre os valores base (01/01/2025)
 para datas posteriores escolhidas pelo usuário.

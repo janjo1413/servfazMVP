@@ -127,7 +127,7 @@ class Storage:
         cursor = conn.cursor()
         
         cursor.execute(
-            "SELECT id, created_at, updated_at, input_data FROM results ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, created_at, updated_at, input_data, output_data FROM results ORDER BY created_at DESC LIMIT ?",
             (limit,)
         )
         
@@ -137,12 +137,20 @@ class Storage:
         results = []
         for row in rows:
             input_data = json.loads(row[3])
+            output_data = json.loads(row[4]) if row[4] else {}
+            
+            # Pegar correção atualizada do output_data se existir, senão usar input_data
+            correcao_ate = output_data.get('correcao_ate') or input_data.get("correção_até", "N/A")
+            correcao_anterior = output_data.get('correcao_anterior')
+            
             results.append({
                 "id": row[0],
                 "created_at": row[1],
                 "updated_at": row[2],
                 "município": input_data.get("município", "N/A"),
-                "correção_até": input_data.get("correção_até", "N/A")
+                "correção_até": input_data.get("correção_até", "N/A"),  # Original
+                "correcao_ate": correcao_ate,  # Atualizada
+                "correcao_anterior": correcao_anterior  # Data anterior (se foi atualizado)
             })
         
         return results
@@ -167,6 +175,59 @@ class Storage:
         conn.close()
         
         return deleted
+    
+    def delete_all_results(self) -> int:
+        """
+        Deleta TODOS os resultados do banco de dados.
+        ATENÇÃO: Operação irreversível!
+        
+        Returns:
+            Número de resultados deletados
+        """
+        conn = sqlite3.connect(str(self.db_path))
+        cursor = conn.cursor()
+        
+        cursor.execute("DELETE FROM results")
+        
+        count = cursor.rowcount
+        conn.commit()
+        conn.close()
+        
+        return count
+    
+    def list_all_results(self) -> list:
+        """
+        Lista TODOS os resultados completos do banco (sem limite).
+        Usado para operações em lote.
+        
+        Returns:
+            Lista de dicionários com todos os campos
+        """
+        conn = sqlite3.connect(str(self.db_path))
+        cursor = conn.cursor()
+        
+        cursor.execute(
+            "SELECT id, created_at, updated_at, input_data, output_data FROM results ORDER BY created_at DESC"
+        )
+        
+        rows = cursor.fetchall()
+        conn.close()
+        
+        results = []
+        for row in rows:
+            input_data = json.loads(row[3])
+            output_data = json.loads(row[4]) if row[4] else {}
+            
+            results.append({
+                "id": row[0],
+                "created_at": row[1],
+                "updated_at": row[2],
+                "município": input_data.get("município", "N/A"),
+                "input_data": input_data,
+                "output_data": output_data
+            })
+        
+        return results
     
     def update_result(self, result_id: str, output_data: Dict[str, Any]) -> bool:
         """

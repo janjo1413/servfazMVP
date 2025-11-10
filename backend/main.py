@@ -110,9 +110,9 @@ def atualizar_selic_agendado():
     print("=" * 60)
     try:
         selic_api.update_cache()
-        print("[SCHEDULER] ✅ Cache SELIC atualizado com sucesso!")
+        print("[SCHEDULER] Cache SELIC atualizado com sucesso!")
     except Exception as e:
-        print(f"[SCHEDULER] ❌ Erro ao atualizar SELIC: {str(e)}")
+        print(f"[SCHEDULER] Erro ao atualizar SELIC: {str(e)}")
     print("=" * 60)
 
 
@@ -130,7 +130,7 @@ scheduler.add_job(
 
 # Iniciar scheduler
 scheduler.start()
-print("[SCHEDULER] 🚀 Scheduler iniciado - Atualização automática de SELIC agendada para 06:00 diariamente")
+print("[SCHEDULER] Scheduler iniciado - Atualização automática de SELIC agendada para 06:00 diariamente")
 
 # Garantir que o scheduler seja desligado corretamente ao encerrar a aplicação
 atexit.register(lambda: scheduler.shutdown())
@@ -201,7 +201,7 @@ def calculate(input_data: CalculateInput):
         
         with ExcelRunner(EXCEL_PATH, MAPA_CELULAS_PATH) as runner:
             # Escrever inputs
-            print("✏️ Escrevendo dados na planilha...")
+            print("Escrevendo dados na planilha...")
             runner.write_inputs(input_data.dict())
             
             # Calcular
@@ -311,6 +311,25 @@ def delete_result(result_id: str):
         )
     
     return {"message": f"Resultado {result_id} deletado com sucesso"}
+
+
+@app.delete("/results")
+def delete_all_results():
+    """
+    Deleta TODOS os resultados do banco de dados.
+    ATENÇÃO: Operação irreversível! Uso temporário para testes.
+    """
+    try:
+        count = storage.delete_all_results()
+        return {
+            "message": f"Todos os cálculos foram deletados com sucesso",
+            "total_deletados": count
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro ao deletar todos os resultados: {str(e)}"
+        )
 
 
 @app.get("/selic/ultima-data")
@@ -437,7 +456,7 @@ def forcar_atualizacao_selic():
     Força atualização imediata do cache de SELIC (não precisa esperar o agendamento).
     """
     try:
-        print("🔄 Atualização manual de SELIC solicitada via API")
+        print("Atualização manual de SELIC solicitada via API")
         selic_api.update_cache()
         
         # Retornar status atualizado
@@ -562,6 +581,134 @@ def atualizar_resultado(result_id: str):
         raise HTTPException(
             status_code=500,
             detail=f"Erro ao atualizar cálculo: {str(e)}"
+        )
+
+
+@app.post("/results/atualizar-todos")
+def atualizar_todos_resultados():
+    """
+    Atualiza TODOS os cálculos para a última data SELIC disponível.
+    
+    Processa cada cálculo individualmente e retorna relatório completo:
+    - Sucessos: lista de IDs atualizados
+    - Erros: lista de IDs que falharam e motivo
+    - Já atualizados: lista de IDs que já estavam na data mais recente
+    """
+    try:
+        # 1. Buscar todos os resultados
+        todos_calculos = storage.list_all_results()
+        
+        if not todos_calculos:
+            return {
+                "message": "Nenhum cálculo encontrado para atualizar",
+                "total": 0,
+                "sucessos": [],
+                "erros": [],
+                "ja_atualizados": []
+            }
+        
+        # 2. Buscar última data SELIC
+        meses = [k for k in selic_api.cache.keys() if k != '_metadata']
+        if not meses:
+            raise HTTPException(
+                status_code=500,
+                detail="Cache SELIC vazio"
+            )
+        
+        meses.sort()
+        ultimo_mes = meses[-1]
+        ano, mes = ultimo_mes.split('-')
+        ultima_data_selic = f"01/{mes}/{ano}"
+        
+        print(f"=" * 60)
+        print(f"Iniciando atualização em lote para {ultima_data_selic}")
+        print(f"Total de cálculos: {len(todos_calculos)}")
+        print(f"=" * 60)
+        
+        # 3. Processar cada cálculo
+        sucessos = []
+        erros = []
+        ja_atualizados = []
+        
+        for i, calculo in enumerate(todos_calculos, 1):
+            calculo_id = calculo['id']
+            
+            try:
+                print(f"[{i}/{len(todos_calculos)}] Processando {calculo_id}...")
+                
+                # Verificar se já está atualizado
+                resultado = storage.get_result(calculo_id)
+                correcao_atual = resultado['output_data'].get('correcao_ate') or resultado['input_data'].get('correção_até')
+                
+                if correcao_atual == ultima_data_selic:
+                    print(f"  [OK] Já atualizado")
+                    ja_atualizados.append({
+                        "id": calculo_id,
+                        "municipio": resultado['input_data'].get('município', 'N/A')
+                    })
+                    continue
+                
+                # Recalcular
+                input_data = resultado['input_data'].copy()
+                input_data['correção_até'] = ultima_data_selic
+                
+                with ExcelRunner(EXCEL_PATH, MAPA_CELULAS_PATH) as runner:
+                    runner.write_inputs(input_data)
+                    runner.calculate()
+                    results = runner.read_results()
+                
+                # Aplicar SELIC
+                results_atualizados = None
+                if selic_updater.precisa_atualizacao(ultima_data_selic):
+                    results_atualizados = selic_updater.atualizar_resultados(results, ultima_data_selic)
+                
+                # Atualizar banco
+                novo_output_data = {
+                    "results_base": results,
+                    "results_atualizados": results_atualizados,
+                    "correcao_ate": ultima_data_selic,
+                    "correcao_anterior": correcao_atual
+                }
+                
+                storage.update_result(calculo_id, novo_output_data)
+                
+                print(f"  [OK] Atualizado: {correcao_atual} -> {ultima_data_selic}")
+                sucessos.append({
+                    "id": calculo_id,
+                    "municipio": input_data.get('município', 'N/A'),
+                    "data_anterior": correcao_atual,
+                    "data_nova": ultima_data_selic
+                })
+                
+            except Exception as e:
+                print(f"  [ERRO] Erro: {str(e)}")
+                erros.append({
+                    "id": calculo_id,
+                    "municipio": calculo.get('município', 'N/A'),
+                    "erro": str(e)
+                })
+        
+        print(f"=" * 60)
+        print(f"Atualização em lote concluída!")
+        print(f"Sucessos: {len(sucessos)} | Erros: {len(erros)} | Já atualizados: {len(ja_atualizados)}")
+        print(f"=" * 60)
+        
+        return {
+            "message": "Atualização em lote concluída",
+            "total": len(todos_calculos),
+            "sucessos": sucessos,
+            "erros": erros,
+            "ja_atualizados": ja_atualizados,
+            "data_selic": ultima_data_selic
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro na atualização em lote: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erro na atualização em lote: {str(e)}"
         )
 
 

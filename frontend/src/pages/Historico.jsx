@@ -7,6 +7,7 @@ function Historico() {
   const [error, setError] = useState(null);
   const [selectedCalculo, setSelectedCalculo] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' ou 'details'
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   // Carregar lista de cálculos ao montar o componente
   useEffect(() => {
@@ -178,6 +179,77 @@ function Historico() {
   const handleVoltar = () => {
     setSelectedCalculo(null);
     setViewMode('list');
+    fetchCalculos(); // Recarregar lista ao voltar
+  };
+
+  const handleAtualizarTodos = async () => {
+    if (!confirm('Deseja atualizar TODOS os cálculos para a última SELIC disponível?\n\nEsta operação pode demorar alguns minutos.')) {
+      return;
+    }
+
+    setBulkLoading(true);
+
+    try {
+      const response = await fetch('/api/results/atualizar-todos', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Erro ao atualizar cálculos');
+      }
+
+      // Mostrar relatório
+      const { total, sucessos, erros, ja_atualizados, data_selic } = data;
+      
+      let mensagem = `Atualização Concluída!\n\n`;
+      mensagem += `Total de cálculos: ${total}\n`;
+      mensagem += `Data SELIC: ${data_selic}\n\n`;
+      mensagem += `Atualizados: ${sucessos.length}\n`;
+      mensagem += `Já estavam atualizados: ${ja_atualizados.length}\n`;
+      
+      if (erros.length > 0) {
+        mensagem += `\nErros: ${erros.length}\n`;
+        erros.forEach(erro => {
+          mensagem += `  - ${erro.municipio}: ${erro.erro}\n`;
+        });
+      }
+
+      alert(mensagem);
+      fetchCalculos(); // Recarregar lista
+    } catch (err) {
+      alert(`Erro: ${err.message}`);
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleDeletarTodos = async () => {
+    if (!confirm('ATENÇÃO: Deseja DELETAR TODOS os cálculos?\n\nEsta ação é IRREVERSÍVEL!')) {
+      return;
+    }
+
+    if (!confirm('Confirma novamente? Esta operação não pode ser desfeita!')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/results', {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Erro ao deletar cálculos');
+      }
+
+      alert(`${data.total_deletados} cálculos foram deletados com sucesso!`);
+      fetchCalculos(); // Recarregar lista
+    } catch (err) {
+      alert(`Erro: ${err.message}`);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -275,7 +347,7 @@ function Historico() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Histórico de Cálculos
         </h2>
@@ -283,6 +355,45 @@ function Historico() {
           Visualize e gerencie todos os cálculos realizados
         </p>
       </div>
+
+      {/* Botões de Ações em Lote */}
+      {!loading && calculos.length > 0 && (
+        <div className="flex justify-center gap-4 mb-6">
+          <button
+            onClick={handleAtualizarTodos}
+            disabled={bulkLoading}
+            className="inline-flex items-center px-6 py-3 border border-amber-400 rounded-lg text-amber-800 bg-amber-50 hover:bg-amber-100 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {bulkLoading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Atualizando todos...
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Atualizar Todos
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={handleDeletarTodos}
+            disabled={bulkLoading}
+            className="inline-flex items-center px-6 py-3 border border-red-400 rounded-lg text-red-800 bg-red-50 hover:bg-red-100 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Deletar Todos (Temp)
+          </button>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (
@@ -373,8 +484,17 @@ function Historico() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {calculo.município}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {calculo.correção_até}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-col">
+                        <span className="text-gray-900 font-medium">
+                          {calculo.correcao_ate || calculo.correção_até}
+                        </span>
+                        {calculo.correcao_anterior && (
+                          <span className="text-xs text-gray-500">
+                            Antes era {calculo.correcao_anterior}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-3">

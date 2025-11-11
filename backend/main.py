@@ -85,7 +85,12 @@ app = FastAPI(
 # CORS (permitir requisições do frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, especificar domínios
+    allow_origins=[
+        "*",  # Permitir todas as origens (desenvolvimento)
+        "https://jg-jp-rc-mvp.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

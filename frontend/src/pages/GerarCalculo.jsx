@@ -50,6 +50,9 @@ function GerarCalculo() {
       }
 
       const data = await response.json();
+      console.log('📊 Dados recebidos da API:', data);
+      console.log('📊 Primeiro resultado base:', data.results_base?.[0]);
+      console.log('📊 Primeiro resultado atualizado:', data.results_atualizados?.[0]);
       setResults(data);
     } catch (err) {
       setError(err.message);

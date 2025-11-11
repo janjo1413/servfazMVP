@@ -57,9 +57,6 @@ function Historico() {
       }
 
       const data = await response.json();
-      console.log('📦 [DETALHES] Dados recebidos:', JSON.stringify(data, null, 2));
-      console.log('📦 [DETALHES] output_data:', JSON.stringify(data.output_data, null, 2));
-      console.log('📦 [DETALHES] input_data:', JSON.stringify(data.input_data, null, 2));
       
       // Transformar dados para o formato esperado pelo ResultTable
       const transformedData = {
@@ -69,8 +66,6 @@ function Historico() {
         results_base: data.output_data?.results_base || [],
         results_atualizados: data.output_data?.results_atualizados || null,
       };
-      
-      console.log('✨ [DETALHES] Dados transformados:', JSON.stringify(transformedData, null, 2));
       
       setSelectedCalculo(transformedData);
       setViewMode('details');
@@ -361,17 +356,7 @@ function Historico() {
         </div>
 
         {/* Resultados */}
-        {selectedCalculo.output_data && (
-          <ResultTable 
-            results={{
-              id: selectedCalculo.id,
-              created_at: selectedCalculo.created_at,
-              correcao_ate: selectedCalculo.input_data?.correção_até,
-              results_base: selectedCalculo.output_data.results_base,
-              results_atualizados: selectedCalculo.output_data.results_atualizados
-            }} 
-          />
-        )}
+        <ResultTable results={selectedCalculo} />
       </div>
     );
   }

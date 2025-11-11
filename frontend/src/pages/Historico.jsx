@@ -57,9 +57,9 @@ function Historico() {
       }
 
       const data = await response.json();
-      console.log('📦 [DETALHES] Dados recebidos:', data);
-      console.log('📦 [DETALHES] output_data:', data.output_data);
-      console.log('📦 [DETALHES] input_data:', data.input_data);
+      console.log('📦 [DETALHES] Dados recebidos:', JSON.stringify(data, null, 2));
+      console.log('📦 [DETALHES] output_data:', JSON.stringify(data.output_data, null, 2));
+      console.log('📦 [DETALHES] input_data:', JSON.stringify(data.input_data, null, 2));
       
       // Transformar dados para o formato esperado pelo ResultTable
       const transformedData = {
@@ -70,7 +70,7 @@ function Historico() {
         results_atualizados: data.output_data?.results_atualizados || null,
       };
       
-      console.log('✨ [DETALHES] Dados transformados:', transformedData);
+      console.log('✨ [DETALHES] Dados transformados:', JSON.stringify(transformedData, null, 2));
       
       setSelectedCalculo(transformedData);
       setViewMode('details');

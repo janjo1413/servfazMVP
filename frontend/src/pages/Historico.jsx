@@ -57,7 +57,17 @@ function Historico() {
       }
 
       const data = await response.json();
-      setSelectedCalculo(data);
+      
+      // Transformar dados para o formato esperado pelo ResultTable
+      const transformedData = {
+        id: data.id,
+        created_at: data.created_at,
+        correcao_ate: data.output_data?.correcao_ate || data.input_data?.['correção_até'],
+        results_base: data.output_data?.results_base || [],
+        results_atualizados: data.output_data?.results_atualizados || null,
+      };
+      
+      setSelectedCalculo(transformedData);
       setViewMode('details');
     } catch (err) {
       alert(`Erro: ${err.message}`);

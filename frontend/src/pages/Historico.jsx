@@ -48,7 +48,9 @@ function Historico() {
 
   const handleVerDetalhes = async (calculoId) => {
     try {
-      const response = await fetch(getApiUrl(`/results/${calculoId}`));
+      const response = await fetch(getApiUrl(`/results/${calculoId}`), {
+        headers: getDefaultHeaders(),
+      });
       
       if (!response.ok) {
         throw new Error('Erro ao carregar detalhes');
@@ -70,6 +72,7 @@ function Historico() {
     try {
       const response = await fetch(getApiUrl(`/results/${calculoId}`), {
         method: 'DELETE',
+        headers: getDefaultHeaders(),
       });
 
       if (!response.ok) {
@@ -105,6 +108,7 @@ function Historico() {
     try {
       const response = await fetch(getApiUrl(`/results/${calculoId}/atualizar`), {
         method: 'POST',
+        headers: getDefaultHeaders(),
       });
 
       const data = await response.json();
@@ -204,6 +208,7 @@ function Historico() {
     try {
       const response = await fetch(getApiUrl('/results/atualizar-todos'), {
         method: 'POST',
+        headers: getDefaultHeaders(),
       });
 
       const data = await response.json();
@@ -249,6 +254,7 @@ function Historico() {
     try {
       const response = await fetch(getApiUrl('/results'), {
         method: 'DELETE',
+        headers: getDefaultHeaders(),
       });
 
       const data = await response.json();

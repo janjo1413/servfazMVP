@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../config/api';
+import { getApiUrl, getDefaultHeaders } from '../config/api';
 
 function SelicPanel() {
   const [selicData, setSelicData] = useState([]);
@@ -13,7 +13,9 @@ function SelicPanel() {
 
   const fetchSelicStatus = async () => {
     try {
-      const response = await fetch(getApiUrl('/selic/status'));
+      const response = await fetch(getApiUrl('/selic/status'), {
+        headers: getDefaultHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Erro ao buscar dados SELIC');
       }

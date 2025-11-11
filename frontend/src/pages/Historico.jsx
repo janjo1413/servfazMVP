@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ResultTable from '../components/ResultTable';
-import { getApiUrl } from '../config/api';
+import { getApiUrl, getDefaultHeaders } from '../config/api';
 
 function Historico() {
   const [calculos, setCalculos] = useState([]);
@@ -20,13 +20,24 @@ function Historico() {
     setError(null);
 
     try {
-      const response = await fetch(getApiUrl('/results'));
+      const url = getApiUrl('/results');
+      console.log('🔍 [HISTORICO] Tentando buscar de:', url);
+      
+      const response = await fetch(url, {
+        headers: getDefaultHeaders(),
+      });
+      
+      console.log('📡 [HISTORICO] Status:', response.status);
+      console.log('📡 [HISTORICO] Headers:', response.headers.get('content-type'));
       
       if (!response.ok) {
+        const text = await response.text();
+        console.error('❌ [HISTORICO] Erro - Response text:', text.substring(0, 200));
         throw new Error('Erro ao carregar histórico');
       }
 
       const data = await response.json();
+      console.log('✅ [HISTORICO] Dados recebidos:', data);
       setCalculos(data.results || []);
     } catch (err) {
       setError(err.message);

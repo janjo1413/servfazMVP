@@ -77,7 +77,7 @@ class CalculateResult(BaseModel):
 
 # Inicialização do FastAPI
 app = FastAPI(
-    title="ServFaz MVP - Excel Calculator API",
+    title="JGJPRC MVP - Excel Calculator API",
     description="API que usa Excel como motor de cálculo para processos jurídicos",
     version="1.0.0"
 )

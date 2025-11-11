@@ -15,7 +15,7 @@ function Navbar() {
           {/* Logo/Título */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold text-white">
-              RcJgJp MVP
+              JGJPRC MVP
             </h1>
           </div>
 

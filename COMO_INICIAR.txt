@@ -11,6 +11,6 @@ cd frontend
 npm run dev
 ```
 
-tunel & "$env:USERPROFILE\ngrok\ngrok.exe" http 127.0.0.1:8000
+& "$env:USERPROFILE\ngrok\ngrok.exe" http 127.0.0.1:8000
 
 https://nixon-actinoid-faustino.ngrok-free.dev

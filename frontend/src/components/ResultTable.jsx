@@ -1,16 +1,9 @@
 import React from 'react';
 
 function ResultTable({ results }) {
-  console.log('🎨 ResultTable recebeu:', results);
-  
   if (!results || !results.results_base) {
-    console.log('⚠️ Sem resultados para mostrar');
     return null;
   }
-
-  console.log('✅ Renderizando tabelas...');
-  console.log('📋 Quantidade de blocos base:', results.results_base?.length);
-  console.log('📋 Quantidade de blocos atualizados:', results.results_atualizados?.length);
 
   const formatValue = (value) => {
     if (value === null || value === undefined || value === '') {

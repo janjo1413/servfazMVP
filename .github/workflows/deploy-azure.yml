@@ -1,0 +1,139 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Permite deploy manual
+
+env:
+  AZURE_WEBAPP_NAME: mvprc-app
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # =============================================
+    # 1. CHECKOUT CODE
+    # =============================================
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    # =============================================
+    # 2. BUILD BACKEND (Python)
+    # =============================================
+    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: 📦 Install Python dependencies
+      run: |
+        cd backend
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # =============================================
+    # 3. BUILD FRONTEND (React + Vite)
+    # =============================================
+    - name: 🟢 Set up Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: 📦 Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: 🏗️ Build frontend (production)
+      run: |
+        cd frontend
+        npm run build
+      env:
+        NODE_ENV: production
+    
+    - name: 📋 Verify frontend build
+      run: |
+        ls -la frontend/dist
+        echo "Build size:"
+        du -sh frontend/dist
+    
+    # =============================================
+    # 4. MERGE FRONTEND + BACKEND
+    # =============================================
+    - name: 🔀 Copy frontend build to backend
+      run: |
+        mkdir -p backend/static
+        cp -r frontend/dist/* backend/static/
+        echo "✓ Frontend copiado para backend/static"
+        ls -la backend/static
+    
+    # =============================================
+    # 5. PREPARE DEPLOYMENT PACKAGE
+    # =============================================
+    - name: 📦 Prepare deployment package
+      run: |
+        cd backend
+        # Copiar arquivos necessários
+        mkdir -p deployment
+        cp -r * deployment/ 2>/dev/null || true
+        # Garantir que startup.sh esteja presente no pacote (copiar explicitamente)
+        cp startup.sh deployment/ 2>/dev/null || true
+        cp .env.production deployment/.env || echo "No .env.production found"
+        
+        # Adicionar startup.sh
+        chmod +x deployment/startup.sh
+        
+        echo "✓ Deployment package pronto"
+        ls -la deployment
+
+    - name: 🔎 Inspect deployment package (debug)
+      run: |
+        echo "-- deployment tree --"
+        ls -la backend/deployment || true
+        echo "-- head of startup.sh (if present) --"
+        if [ -f backend/deployment/startup.sh ]; then
+          sed -n '1,120p' backend/deployment/startup.sh
+        else
+          echo "startup.sh NOT FOUND in backend/deployment"
+        fi
+    
+    # =============================================
+    # 6. DEPLOY TO AZURE
+    # =============================================
+    - name: 🚀 Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./backend/deployment
+    
+    # =============================================
+    # 7. POST-DEPLOYMENT VERIFICATION
+    # =============================================
+    - name: ✅ Verify deployment
+      run: |
+        echo "Aguardando 10s para inicialização..."
+        sleep 10
+        
+        # Testar endpoint de health
+        curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/ || exit 1
+        echo "✓ Aplicação respondendo corretamente"
+    
+    # =============================================
+    # 8. NOTIFICATION (Opcional)
+    # =============================================
+    - name: 📢 Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Deploy concluído com sucesso!"
+          echo "URL: https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+        else
+          echo "❌ Deploy falhou"
+        fi

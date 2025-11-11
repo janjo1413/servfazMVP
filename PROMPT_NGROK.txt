@@ -1,0 +1,51 @@
+===============================================================================
+PROMPT PARA CONFIGURAÇÃO DO NGROK - COPIAR E COLAR NO PRÓXIMO CHAT
+===============================================================================
+
+INSTRUÇÕES IMPORTANTES PARA A LLM:
+- NÃO criar arquivos .md ou .txt após cada passo
+- SEMPRE verificar se algo já existe antes de criar/editar
+- Executar comandos direto no terminal sem pedir confirmação desnecessária
+- Ser objetivo e prático
+
+===============================================================================
+
+Olá! Preciso configurar o Ngrok para expor minha aplicação local (FastAPI + React) para acesso remoto.
+
+CONTEXTO DO PROJETO:
+- Backend: FastAPI (Python) rodando na porta 8000
+- Frontend: React + Vite (dev server na porta 5173)
+- Sistema: Windows
+- A aplicação usa xlwings para processar planilhas Excel, por isso precisa rodar localmente (não funciona em Azure Linux)
+
+OBJETIVO:
+Configurar Ngrok para:
+1. Expor a API backend (porta 8000) publicamente
+2. Permitir que o frontend acesse o backend via URL pública do Ngrok
+3. Testar a aplicação funcionando com acesso remoto
+
+PASSOS QUE PRECISO:
+1. Instalar Ngrok (se não estiver instalado)
+2. Criar conta gratuita e configurar authtoken
+3. Criar túnel HTTP para porta 8000
+4. Configurar CORS no backend para aceitar requisições da URL do Ngrok
+5. Atualizar variável de ambiente no frontend para apontar para URL do Ngrok
+6. Testar aplicação completa funcionando
+
+ESTRUTURA DO PROJETO:
+```
+servfazMVP/
+├── backend/
+│   ├── main.py (FastAPI app)
+│   ├── requirements.txt
+│   └── services/
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── vite.config.js
+└── data/
+    └── planilhamae.xlsx
+```
+
+Por favor, me guie passo a passo na configuração do Ngrok com comandos prontos para Windows PowerShell.
+Seja direto, execute os comandos sem pedir confirmação repetidamente, e evite criar arquivos de documentação a cada etapa.

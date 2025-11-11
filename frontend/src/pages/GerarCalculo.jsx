@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ResultTable from '../components/ResultTable';
 import SelicPanel from '../components/SelicPanel';
+import { getApiUrl } from '../config/api';
 
 function GerarCalculo() {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ function GerarCalculo() {
     setResults(null);
 
     try {
-      const response = await fetch('/api/calculate', {
+      const response = await fetch(getApiUrl('/calculate'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

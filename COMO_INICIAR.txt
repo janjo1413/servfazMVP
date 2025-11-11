@@ -10,3 +10,7 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 cd frontend
 npm run dev
 ```
+
+tunel & "$env:USERPROFILE\ngrok\ngrok.exe" http 127.0.0.1:8000
+
+https://nixon-actinoid-faustino.ngrok-free.dev

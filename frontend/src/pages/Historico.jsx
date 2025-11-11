@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ResultTable from '../components/ResultTable';
+import { getApiUrl } from '../config/api';
 
 function Historico() {
   const [calculos, setCalculos] = useState([]);
@@ -19,7 +20,7 @@ function Historico() {
     setError(null);
 
     try {
-      const response = await fetch('/api/results');
+      const response = await fetch(getApiUrl('/results'));
       
       if (!response.ok) {
         throw new Error('Erro ao carregar histórico');
@@ -36,7 +37,7 @@ function Historico() {
 
   const handleVerDetalhes = async (calculoId) => {
     try {
-      const response = await fetch(`/api/results/${calculoId}`);
+      const response = await fetch(getApiUrl(`/results/${calculoId}`));
       
       if (!response.ok) {
         throw new Error('Erro ao carregar detalhes');
@@ -56,7 +57,7 @@ function Historico() {
     }
 
     try {
-      const response = await fetch(`/api/results/${calculoId}`, {
+      const response = await fetch(getApiUrl(`/results/${calculoId}`), {
         method: 'DELETE',
       });
 
@@ -91,7 +92,7 @@ function Historico() {
     `;
 
     try {
-      const response = await fetch(`/api/results/${calculoId}/atualizar`, {
+      const response = await fetch(getApiUrl(`/results/${calculoId}/atualizar`), {
         method: 'POST',
       });
 
@@ -190,7 +191,7 @@ function Historico() {
     setBulkLoading(true);
 
     try {
-      const response = await fetch('/api/results/atualizar-todos', {
+      const response = await fetch(getApiUrl('/results/atualizar-todos'), {
         method: 'POST',
       });
 
@@ -235,7 +236,7 @@ function Historico() {
     }
 
     try {
-      const response = await fetch('/api/results', {
+      const response = await fetch(getApiUrl('/results'), {
         method: 'DELETE',
       });
 

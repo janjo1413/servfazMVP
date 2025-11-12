@@ -1,12 +1,12 @@
 # ServFaz MVP - Sistema de Cálculo Jurídico
 
-## 🎯 Visão Geral
+## Visão Geral
 
 Sistema web completo (FastAPI + React) que utiliza **Excel como motor de cálculo** para processos jurídicos do FUNDEF.
 
 O usuário preenche um formulário web, os dados são escritos automaticamente na planilha `planilhamae.xlsx`, o Excel executa os cálculos complexos, e os resultados são exibidos instantaneamente na interface.
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - ✅ **Formulário Web Intuitivo**: 10 campos incluindo datas, honorários e deságios
 - ✅ **Integração Completa com Excel**: Escrita/leitura via xlwings mantendo todas as fórmulas ativas
@@ -17,7 +17,7 @@ O usuário preenche um formulário web, os dados são escritos automaticamente n
 - ✅ **Persistência em SQLite**: Histórico completo de todos os cálculos
 - ✅ **Interface Responsiva**: React + TailwindCSS com formatação pt-BR
 
-## 🆕 Novidade: Atualização SELIC Automática
+## Novidade: Atualização SELIC Automática
 
 O campo **"Correção até"** agora é totalmente funcional! 
 
@@ -28,9 +28,9 @@ O campo **"Correção até"** agora é totalmente funcional!
 ### Exemplo:
 Usuário escolhe `01/03/2025` → Sistema aplica SELIC de fevereiro e março/2025 sobre os valores base.
 
-📖 **Leia mais**: [INSTRUCOES_USO_SELIC.md](./INSTRUCOES_USO_SELIC.md) | [FUNCIONALIDADE_SELIC.md](./FUNCIONALIDADE_SELIC.md)
+ **Leia mais**: [INSTRUCOES_USO_SELIC.md](./INSTRUCOES_USO_SELIC.md) | [FUNCIONALIDADE_SELIC.md](./FUNCIONALIDADE_SELIC.md)
 
-## 🔄 Fluxo de Dados
+## Fluxo de Dados
 
 ```
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
@@ -46,7 +46,7 @@ Usuário escolhe `01/03/2025` → Sistema aplica SELIC de fevereiro e março/202
                    Resultados (JSON)
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 servfazMVP/
@@ -79,7 +79,7 @@ servfazMVP/
 └── .gitignore
 ```
 
-## 🚀 Como Executar
+## Como Executar
 
 ### Pré-requisitos
 
@@ -120,7 +120,7 @@ npm run dev
 - **Frontend**: http://localhost:3000
 - **API Docs**: http://127.0.0.1:8000/docs
 
-## 📊 Mapeamento de Dados
+## Mapeamento de Dados
 
 ### Entrada (cells B6-B15)
 | Campo | Célula | Tipo |
@@ -141,7 +141,7 @@ npm run dev
 - **Colunas**: A-F (Descrição, Valores, Juros, Atualizado, Honorários) + AB
 - **Linha especial**: "TOTAL DO VALOR PROPOSTO PARA ACORDO"
 
-## 🔧 Detalhes Técnicos
+## Detalhes Técnicos
 
 ### Conversões Críticas
 
@@ -172,7 +172,7 @@ CREATE TABLE results (
 )
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Excel não abre
 - Verifique se Microsoft Excel está instalado
@@ -192,7 +192,7 @@ CREATE TABLE results (
 - Verifique se tipo do campo é `float` no Pydantic model
 - Confirme que conversão de percentuais está ativa
 
-## 📝 Endpoints da API
+## Endpoints da API
 
 ### `POST /calculate`
 **Request:**
@@ -233,7 +233,7 @@ Busca cálculo específico por ID.
 ### `GET /results`
 Lista todos os cálculos salvos.
 
-## 🎨 Frontend
+## Frontend
 
 ### Componentes
 
@@ -254,7 +254,7 @@ Lista todos os cálculos salvos.
 - **Tema escuro**: bg-gray-900, text-white
 - **Cores**: Blue-500 (botões), Green-500 (destaque ACORDO)
 
-## 📦 Dependências
+## Dependências
 
 ### Backend
 ```txt
@@ -277,23 +277,23 @@ python-dotenv
 }
 ```
 
-## 🔐 Segurança
+## Segurança
 
-- ⚠️ **MVP apenas**: Sem autenticação implementada
-- ⚠️ **Excel local**: Não executar em produção com múltiplos usuários simultâneos
-- ⚠️ **Sem validação avançada**: Input sanitization básica apenas
+-  **MVP apenas**: Sem autenticação implementada
+-  **Excel local**: Não executar em produção com múltiplos usuários simultâneos
+-  **Sem validação avançada**: Input sanitization básica apenas
 
-## 🚧 Limitações Conhecidas
+## Limitações Conhecidas
 
 - **Excel deve estar instalado localmente** (Windows)
 - **Um cálculo por vez** (xlwings não suporta paralelização)
 - **Sem tratamento de erros do Excel** (fórmulas quebradas causam crash)
 - **Cache SELIC não expira automaticamente** (limpeza manual necessária)
 
-## 📄 Licença
+##  Licença
 
 Este é um projeto MVP para fins educacionais/demonstração.
 
-## 👨‍💻 Autor
+## Autor
 
 Desenvolvido para automatizar cálculos jurídicos complexos de FUNDEF, substituindo processo manual em Excel por interface web integrada.

@@ -1,4 +1,4 @@
-# ServFaz MVP - Sistema de Cálculo Jurídico
+# Sistema de Cálculo Jurídico
 
 ## Visão Geral
 
